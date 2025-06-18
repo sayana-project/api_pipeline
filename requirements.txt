@@ -1,2 +1,7 @@
 python-dotenv
 requests
+pandas
+FastAPI
+secrets
+fastapi
+uvicorn

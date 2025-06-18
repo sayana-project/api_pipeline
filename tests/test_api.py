@@ -18,8 +18,7 @@ if not token:
     raise ValueError("Le token GitHub est manquant dans le fichier .env")
 
 headers = {"Authorization": f"token {token}"}
-json_user_path = Path(__file__).resolve().parents[1]/"data"/"users.json"
-MAX_USERS = 120
+MAX_USERS = 1000
 USERS_PER_PAGE = 30
 OUTPUT_PATH = Path(__file__).resolve().parents[1]/"data"/"users.json"
 
@@ -36,7 +35,7 @@ def wait_for_rate_limit(reset_timestamp):
     
 def get_user(max_user=MAX_USERS):
     data_tempo =[]
-    since=0
+    since=10361261
     
     while len(data_tempo) < max_user:
         
