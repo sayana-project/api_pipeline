@@ -21,20 +21,24 @@ MAX_USERS = 120
 USERS_PER_PAGE = 30
 OUTPUT_PATH = Path(__file__).resolve().parents[0]/"data"/"users.json"
 
+#fonction qui permet de récupérer le nombre restant de requete API
+#Puis le temps qui reste avant de récupérer tout les appels API
 def get_rate_limit_info(response):
     remaining = int(response.headers.get("X-RateLimit-Remaining", 0))
     reset_time = int(response.headers.get("X-RateLimit-Reset", time.time()))
     return remaining, reset_time
 
+#fonction qui permet de mettre en pause les appel API jusqu'a récupération
+#quota API
 def wait_for_rate_limit(reset_timestamp):
     wait_seconds = reset_timestamp - int(time.time()) + 1
     print(f"Quota API atteint. Pause de {wait_seconds} secondes")
     time.sleep(wait_seconds)
     
-    
+#fonction qui permet de récupérer les utilisateur de github
 def get_user(max_user=MAX_USERS):
     data_tempo =[]
-    since=50000
+    since=10361350
     
     while len(data_tempo) < max_user:
         
@@ -82,6 +86,7 @@ def get_user(max_user=MAX_USERS):
     print(f"le reset time est a {datetime.fromtimestamp(reset_time)}") 
     return data_tempo
 
+#Fonction qui permet de save les data en fichier json formatter
 def save_users(users, output_path=OUTPUT_PATH):
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
