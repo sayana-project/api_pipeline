@@ -1,0 +1,8 @@
+python-dotenv
+requests
+pandas
+FastAPI
+uvicorn
+Optional
+pytest
+pydantic
