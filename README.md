@@ -1,6 +1,8 @@
 
 # 📊 API Utilisateurs GitHub — Projet Python / FastAPI
 
+![image swagger](image/img1.jpg)
+
 Ce projet a pour objectif de :
 - Récupérer des utilisateurs depuis l’API GitHub (login, id, bio, avatar...),
 - Filtrer et nettoyer les données (bio non vide, date > 2015...),
@@ -45,6 +47,7 @@ Depuis le dossier `api_pipeline/api/`, exécuter :
 ```bash
 uvicorn main:app --reload --port 8000
 ```
+![login swagger](image/img3.jpg)
 
 Interface Swagger : http://localhost:8000/docs  
 Interface ReDoc : http://localhost:8000/redoc
@@ -52,6 +55,8 @@ Interface ReDoc : http://localhost:8000/redoc
 ---
 
 ## 🔐 Authentification HTTP Basic
+
+![login swagger](image/img2.jpg)
 
 L’API est protégée. Utilisez :  
 - **login** : `admin`  
