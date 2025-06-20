@@ -13,17 +13,14 @@ from api.security import get_current_username
 # Configuration de l'application FastAPI
 app = FastAPI(
     title="API Pipeline Users",
-    description="API pour la gestion des utilisateurs avec recherche avancée",
+    description="API pour la gestion des utilisateurs avec recherche",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
 
 # Inclure les routes depuis routes.py
-app.include_router(router, prefix="/api")
-
-# Inclure le http auth depuis security.py
-
+app.include_router(router)
 
 def create_app() -> FastAPI:
     """
@@ -34,17 +31,6 @@ def create_app() -> FastAPI:
     """
     return app
 
-
-if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host="127.0.0.1",
-        port=8022,
-        reload=True,
-        log_level="info",
-        access_log=True
-    )
-    
 @app.get("/api/v1/users/me", tags=["secure"])
 def read_current_user(username: str = Depends(get_current_username)):
     return {"message": f"Bienvenue, {username}"}

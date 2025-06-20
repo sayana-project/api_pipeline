@@ -25,6 +25,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
     
 from api.security import get_current_username
+from api.models import User
 # Chargement sécurisé des données au démarrage
 def load_user_data() -> List[Dict[str, Any]]:
     """
@@ -66,23 +67,9 @@ except Exception as e:
     users_data = []
 
 
-@router.get("/", summary="Page d'accueil de l'API")
-async def get_root() -> Dict[str, str]:
-    """
-    Endpoint racine de l'API.
-    
-    Returns:
-        Dict[str, str]: Message de bienvenue avec informations sur l'API
-    """
-    return {
-        "message": "API Pipeline Users",
-        "version": "1.0.0",
-        "documentation": "/docs"
-    }
-
-
 @router.get("/users/", 
            summary="Récupérer tous les utilisateurs",
+           response_model=List[User],
            description="Liste complète des utilisateurs")
 async def get_all_users(username: str = Depends(get_current_username)) -> List[Dict[str, Any]]:
     """
@@ -104,45 +91,8 @@ async def get_all_users(username: str = Depends(get_current_username)) -> List[D
     logger.info(f"Récupération de {len(users_data)} utilisateurs")
     return users_data
 
-
-@router.get("/users/{login}", 
-           summary="Récupérer un utilisateur par login",
-           description="Informations détaillées de l'utilisateur")
-async def get_user_by_login(login: str, username: str = Depends(get_current_username)) -> Dict[str, Any]:
-    """
-    Récupère un utilisateur spécifique par son login.
-    
-    Args:
-        login (str): Login de l'utilisateur recherché (insensible à la casse)
-        
-    Returns:
-        Dict[str, Any]: Informations de l'utilisateur
-        
-    Raises:
-        HTTPException: Si l'utilisateur n'est pas trouvé
-    """
-    if not users_data:
-        raise HTTPException(
-            status_code=503,
-            detail="Service temporairement indisponible"
-        )
-    
-    # Recherche insensible à la casse
-    login_normalized = login.strip().lower()
-    
-    for user in users_data:
-        if user.get('login', '').lower() == login_normalized:
-            logger.info(f"Utilisateur trouvé : {login}")
-            return user
-    
-    logger.warning(f"Utilisateur non trouvé : {login}")
-    raise HTTPException(
-        status_code=404, 
-        detail=f"Utilisateur avec le login '{login}' introuvable"
-    )
-
-
-@router.get("/users/search/", 
+@router.get("/users/search",
+            response_model=List[User],
            summary="Rechercher des utilisateurs",
            description="Liste des utilisateurs correspondant à la recherche")
 async def search_users(
@@ -196,22 +146,38 @@ async def search_users(
     return matching_users
 
 
-@router.get("/etat", 
-           summary="Vérification de l'état de etat de l'API",
-           description="Statut de l'API et des données")
-async def health_check() -> Dict[str, Any]:
+@router.get("/users/{login}", 
+           summary="Récupérer un utilisateur par login",
+           description="Informations détaillées de l'utilisateur")
+async def get_user_by_login(login: str, username: str = Depends(get_current_username)) -> Dict[str, Any]:
     """
-    Endpoint de vérification de l'état de etat de l'API.
+    Récupère un utilisateur spécifique par son login.
     
+    Args:
+        login (str): Login de l'utilisateur recherché (insensible à la casse)
+        
     Returns:
-        Dict[str, Any]: Informations sur l'état de l'API
+        Dict[str, Any]: Informations de l'utilisateur
+        
+    Raises:
+        HTTPException: Si l'utilisateur n'est pas trouvé
     """
-    return {
-        "status": "healthy",
-        "users_loaded": len(users_data),
-        "data_available": bool(users_data)
-    }
+    if not users_data:
+        raise HTTPException(
+            status_code=503,
+            detail="Service temporairement indisponible"
+        )
     
-@router.get("/users/secret/", dependencies=[Depends(get_current_username)])
-def get_secret_users():
-    return {"secret": "tu as accédé à une route protégée"}
+    # Recherche insensible à la casse
+    login_normalized = login.strip().lower()
+    
+    for user in users_data:
+        if user.get('login', '').lower() == login_normalized:
+            logger.info(f"Utilisateur trouvé : {login}")
+            return user
+    
+    logger.warning(f"Utilisateur non trouvé : {login}")
+    raise HTTPException(
+        status_code=404, 
+        detail=f"Utilisateur avec le login '{login}' introuvable"
+    )
