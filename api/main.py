@@ -31,6 +31,8 @@ def create_app() -> FastAPI:
     """
     return app
 
-@app.get("/api/v1/users/me", tags=["secure"])
+@app.get("/users/me/", tags=["secure"],
+                  summary="Récupérer l'utilisateur actuel",
+        description="Envoi un message a l'utilisateur actuel")
 def read_current_user(username: str = Depends(get_current_username)):
     return {"message": f"Bienvenue, {username}"}
